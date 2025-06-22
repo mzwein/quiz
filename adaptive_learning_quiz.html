@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Adaptive Learning Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #342a86;
+      --secondary: #e2d6c4;
+      --gradient: linear-gradient(135deg, #342a86, #5c4dcf);
+      --bg-light: #f8f6f3;
+      --text-dark: #222;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .container {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .fade {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .fade.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #2b2371, #4432ad);
+    }
+
+    .question {
+      margin-top: 1rem;
+    }
+
+    .result {
+      padding: 1rem;
+      border-left: 4px solid var(--primary);
+      background: #f0f0ff;
+      margin-top: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>What Do You Want to Learn?</h1>
+    <div id="start-screen">
+      <input type="text" id="topic" placeholder="e.g., Change Management, SQL, Accessibility..." />
+      <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quiz-screen" class="fade"></div>
+    <div id="result-screen" class="fade"></div>
+  </div>
+
+  <script>
+    let topic = '';
+    let currentQuestion = 0;
+    let score = 0;
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+
+    function startQuiz() {
+      topic = document.getElementById('topic').value.trim();
+      if (!topic) return alert("Please enter a topic.");
+      document.getElementById('start-screen').style.display = 'none';
+      quizScreen.classList.add('show');
+      generateQuestions(topic);
+    }
+
+    function generateQuestions(topic) {
+      // Placeholder for real model-based dynamic questions
+      window.questions = Array.from({length: 10}, (_, i) => ({
+        question: `Question ${i+1} about ${topic}: Placeholder content.`,
+        correct: Math.random() > 0.5
+      }));
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestion >= questions.length) return showResults();
+      const q = questions[currentQuestion];
+      quizScreen.innerHTML = `
+        <h2>${q.question}</h2>
+        <button onclick="answer(true)">Yes</button>
+        <button onclick="answer(false)">No</button>
+      `;
+    }
+
+    function answer(userAnswer) {
+      if (userAnswer === questions[currentQuestion].correct) score++;
+      currentQuestion++;
+      showQuestion();
+    }
+
+    function showResults() {
+      quizScreen.style.display = 'none';
+      resultScreen.classList.add('show');
+
+      let strengths = Math.round((score / 10) * 100);
+      let weaknesses = 100 - strengths;
+
+      resultScreen.innerHTML = `
+        <h2>Your Results on "${topic}"</h2>
+        <div class="result">
+          <p><strong>Strengths:</strong> You answered ${score}/10 questions correctly. This suggests a strong foundational understanding in some key areas of ${topic}.</p>
+          <p><strong>Weaknesses:</strong> Missed ${10 - score} areas. Consider focusing on more complex concepts or practical applications within this domain.</p>
+          <p><strong>Recommendations:</strong></p>
+          <ul>
+            <li>Review real-world case studies in ${topic}.</li>
+            <li>Apply concepts through short practice tasks or simulations.</li>
+            <li>Seek feedback from peers or mentors on specific gaps.</li>
+            <li>Use spaced repetition tools to reinforce learning.</li>
+          </ul>
+        </div>
+        <button onclick="location.reload()">Start Over</button>
+      `;
+    }
+  </script>
+</body>
+</html>
